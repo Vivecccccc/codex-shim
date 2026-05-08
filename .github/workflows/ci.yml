@@ -101,6 +101,13 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.94.0
         if: runner.os == 'Windows'
 
+      - name: Force Rust override (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          rustup override set 1.94.0
+          rustup show active-toolchain
+
       - name: Install GUI deps (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -124,6 +131,7 @@ jobs:
           Write-Host "== Toolchain =="
           rustc -Vv
           cargo -V
+          rustup show active-toolchain
           Write-Host "== Paths =="
           Write-Host "PWD: $(Get-Location)"
           Write-Host "GITHUB_WORKSPACE: $env:GITHUB_WORKSPACE"
