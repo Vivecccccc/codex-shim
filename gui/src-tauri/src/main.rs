@@ -811,7 +811,7 @@ fn main() {
             get_runtime_snapshot,
             get_logs
         ])
-        .run(tauri::generate_context!())
+        .run(tauri::generate_context!("tauri.conf.json"))
         .expect("failed to run codex-shim GUI");
 }
 
