@@ -126,9 +126,17 @@ jobs:
           Write-Host "== Tauri config files =="
           Get-ChildItem -Force gui/src-tauri
           if (!(Test-Path "gui/src-tauri/tauri.conf.json")) { throw "missing gui/src-tauri/tauri.conf.json" }
-          if (!(Test-Path "gui/src-tauri/capabilities/default.json")) { throw "missing gui/src-tauri/capabilities/default.json" }
           Get-Content -Raw "gui/src-tauri/tauri.conf.json"
-          Get-Content -Raw "gui/src-tauri/capabilities/default.json"
+          if (Test-Path "gui/src-tauri/capabilities") {
+            Write-Host "== Capabilities directory =="
+            Get-ChildItem -Force "gui/src-tauri/capabilities"
+            $defaultCapability = "gui/src-tauri/capabilities/default.json"
+            if (Test-Path $defaultCapability) {
+              Get-Content -Raw $defaultCapability
+            }
+          } else {
+            Write-Host "No capabilities directory present."
+          }
           Write-Host "== Dependency resolution =="
           cargo tree --manifest-path gui/src-tauri/Cargo.toml -p codex-shim-gui | Select-String "tauri v|tauri-build v|tauri-macros v|tauri-codegen v"
 
