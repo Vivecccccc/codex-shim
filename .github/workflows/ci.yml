@@ -111,6 +111,26 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
+      - name: Diagnose GUI build inputs (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          Write-Host "== Toolchain =="
+          rustc -Vv
+          cargo -V
+          Write-Host "== Paths =="
+          Write-Host "PWD: $(Get-Location)"
+          Write-Host "GITHUB_WORKSPACE: $env:GITHUB_WORKSPACE"
+          Write-Host "== Tauri config files =="
+          Get-ChildItem -Force gui/src-tauri
+          if (!(Test-Path "gui/src-tauri/tauri.conf.json")) { throw "missing gui/src-tauri/tauri.conf.json" }
+          if (!(Test-Path "gui/src-tauri/capabilities/default.json")) { throw "missing gui/src-tauri/capabilities/default.json" }
+          Get-Content -Raw "gui/src-tauri/tauri.conf.json"
+          Get-Content -Raw "gui/src-tauri/capabilities/default.json"
+          Write-Host "== Dependency resolution =="
+          cargo tree --manifest-path gui/src-tauri/Cargo.toml -p codex-shim-gui | Select-String "tauri v|tauri-build v|tauri-macros v|tauri-codegen v"
+
       - name: Test workspace defaults
         run: cargo test
 
