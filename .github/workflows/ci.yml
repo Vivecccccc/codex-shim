@@ -91,6 +91,22 @@ jobs:
           Write-Host "GITHUB_WORKSPACE: $env:GITHUB_WORKSPACE"
           Write-Host "== Tauri config files =="
           Get-ChildItem -Force gui/src-tauri
+          Write-Host "== Icons directory =="
+          if (!(Test-Path "gui/src-tauri/icons")) { throw "missing gui/src-tauri/icons" }
+          Get-ChildItem -Force "gui/src-tauri/icons"
+          $icoPath = "gui/src-tauri/icons/icon.ico"
+          $pngPath = "gui/src-tauri/icons/icon.png"
+          if (!(Test-Path $icoPath)) { throw "missing $icoPath" }
+          if (!(Test-Path $pngPath)) { throw "missing $pngPath" }
+          $icoInfo = Get-Item $icoPath
+          $pngInfo = Get-Item $pngPath
+          Write-Host "icon.ico size(bytes): $($icoInfo.Length)"
+          Write-Host "icon.png size(bytes): $($pngInfo.Length)"
+          Get-FileHash $icoPath -Algorithm SHA256
+          Get-FileHash $pngPath -Algorithm SHA256
+          Write-Host "== Frontend dist directory =="
+          if (!(Test-Path "gui/ui")) { throw "missing gui/ui" }
+          Get-ChildItem -Force "gui/ui"
           if (!(Test-Path "gui/src-tauri/tauri.conf.json")) { throw "missing gui/src-tauri/tauri.conf.json" }
           Get-Content -Raw "gui/src-tauri/tauri.conf.json"
           if (Test-Path "gui/src-tauri/capabilities") {
